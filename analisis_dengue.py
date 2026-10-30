@@ -4,7 +4,7 @@
 # 3. La columna con más datos vacíos es: [localcod con 149652 cantidad de datos vacíos]
 import pandas as pd
 
-# 1. Cargar el archivo (cambia el nombre si es diferente)
+# 1. Cargar el archivo 
 df = pd.read_csv(r"C:\Users\Carlos\OneDrive\Documentos\datos_abiertos_vigilancia_dengue_2000_2024.csv.csv")
 
 # 2. Ver las primeras 5 filas

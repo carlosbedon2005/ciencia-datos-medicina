@@ -45,4 +45,5 @@ plt.xlabel("Departamento", fontsize=12)
 plt.ylabel("Número de Casos", fontsize=12)
 
 # 12. Mostrar el gráfico
+plt.savefig("grafico_dengue_top5.png")
 plt.show()

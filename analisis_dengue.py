@@ -47,3 +47,30 @@ plt.ylabel("Número de Casos", fontsize=12)
 # 12. Mostrar el gráfico
 plt.savefig("grafico_dengue_top5.png")
 plt.show()
+# 13. ¿Qué porcentaje de la columna 'localcod' son nulos?
+porcentaje_nulos = (df['localcod'].isnull().sum() / len(df)) * 100
+print(f"El porcentaje de nulos en 'localcod' es: {porcentaje_nulos:.2f}%")
+
+# 14. Llenar los nulos de 'localcod' con un texto descriptivo
+# En lugar de dejar vacíos (NaN), le pondremos "NO REGISTRADO"
+df['localcod'] = df['localcod'].fillna('NO REGISTRADO')
+
+# 15. Verificar que ya no haya nulos en esa columna
+print("\n--- Nulos restantes en 'localcod' después de la limpieza ---")
+print(df['localcod'].isnull().sum())
+# 16. Agrupar los casos por año para ver la evolución
+casos_por_ano = df['ano'].value_counts().sort_index()
+
+# 17. Crear el gráfico de líneas
+plt.figure(figsize=(12, 6))
+sns.lineplot(x=casos_por_ano.index, y=casos_por_ano.values, marker='o', color='red')
+
+plt.title("Evolución Histórica de Casos de Dengue en Perú")
+plt.xlabel("Año")
+plt.ylabel("Número de Casos")
+plt.grid(True) # Esto pone una cuadrícula de fondo
+
+# Guardar el gráfico como imagen ANTES de mostrarlo
+plt.savefig("grafico_evolucion_dengue.png") 
+
+plt.show()

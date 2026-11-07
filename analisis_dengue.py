@@ -74,3 +74,76 @@ plt.grid(True) # Esto pone una cuadrícula de fondo
 plt.savefig("grafico_evolucion_dengue.png") 
 
 plt.show()
+# ==========================================
+# PREPARACIÓN PARA MACHINE LEARNING
+# ==========================================
+from sklearn.model_selection import train_test_split
+
+# 18. Elegir nuestras "pistas" (Features) y nuestra "respuesta" (Target)
+# Vamos a usar la edad, el sexo y el departamento como pistas.
+# Nuestra respuesta será el tipo de diagnóstico (tipo_dx).
+
+# Para que el modelo entienda las letras (como "Piura" o "M"), 
+# las convertimos en números (0, 1, 2...).
+df_ml = df[['edad', 'sexo', 'departamento', 'tipo_dx']].dropna().copy()
+
+df_ml['sexo_num'] = df_ml['sexo'].map({'M': 1, 'F': 0}) # Masculino=1, Femenino=0
+df_ml['depto_num'] = df_ml['departamento'].astype('category').cat.codes
+
+# Definimos X (las pistas) e y (la respuesta)
+X = df_ml[['edad', 'sexo_num', 'depto_num']]
+y = df_ml['tipo_dx']
+
+# 19. Dividir los datos: 80% para entrenar al modelo, 20% para evaluarlo
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+print("\n--- Datos listos para Machine Learning ---")
+print(f"Filas para entrenar (X_train): {X_train.shape[0]}")
+print(f"Filas para evaluar (X_test): {X_test.shape[0]}")
+# ==========================================
+# ENTRENANDO EL MODELO
+# ==========================================
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, classification_report
+
+# 20. Crear el modelo (como un bebé que aún no sabe nada)
+modelo = RandomForestClassifier(random_state=42, class_weight='balanced')
+
+# 21. Entrenar al modelo (¡aquí aprende!)
+print("\nEntrenando el modelo...")
+modelo.fit(X_train, y_train)
+
+# 22. Hacer que el modelo prediga en los datos que NUNCA vio (el examen)
+predicciones = modelo.predict(X_test)
+
+# 23. Evaluar qué tan bueno es
+precision = accuracy_score(y_test, predicciones)
+print(f"\nPrecisión del modelo: {precision * 100:.2f}%")
+
+# 24. Ver un resumen más detallado
+print("\n--- Reporte de Clasificación ---")
+print(classification_report(y_test, predicciones))
+# 25. Obtener la importancia de cada variable (Feature Importance)
+importancias = modelo.feature_importances_
+# 26. Crear una pequeña tabla para verlo ordenado
+import pandas as pd
+tabla_importancia = pd.DataFrame({
+    'Variable': X.columns,
+    'Importancia': importancias
+}).sort_values(by='Importancia', ascending=False)
+
+print("\n--- ¿Qué pista (variable) fue la más importante para el modelo? ---")
+print(tabla_importancia)
+
+# 27. Graficar la importancia
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+plt.figure(figsize=(8, 5))
+sns.barplot(x='Importancia', y='Variable', data=tabla_importancia, palette='magma')
+plt.title("¿Qué variables importan más para predecir el Dengue?")
+plt.xlabel("Nivel de Importancia")
+plt.ylabel("Variable")
+plt.savefig("grafico_importancia_variables.png")
+plt.show()
+

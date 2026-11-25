@@ -2,6 +2,8 @@
 # 1. El departamento con más casos es: [piura con 239078 casos]
 # 2. La mayoría de los casos son de tipo: [clínico]
 # 3. La columna con más datos vacíos es: [localcod con 149652 cantidad de datos vacíos]
+# 4.El modelo Random Forest obtuvo una precisión del 62.71%, siendo el departamento la variable más importante (92%) para predecir el tipo de diagnóstico, aunque el modelo tiende a favorecer los casos clínicos debido al desbalance de los datos.
+
 import pandas as pd
 
 # 1. Cargar el archivo 

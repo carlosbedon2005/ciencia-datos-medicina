@@ -125,6 +125,52 @@ print("\n--- Reporte de Clasificación ---")
 print(classification_report(y_test, predicciones))
 # 25. Obtener la importancia de cada variable (Feature Importance)
 importancias = modelo.feature_importances_
+# ==========================================
+# 28. PROBANDO OTROS ALGORITMOS (REG. LOGÍSTICA Y XGBOOST)
+# ==========================================
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+from xgboost import XGBClassifier
+from sklearn.metrics import accuracy_score
+
+print("\n--- Evaluando otros modelos ---")
+
+# --- A. REGRESIÓN LOGÍSTICA ---
+# Ojo: A la Regresión Logística le gustan los datos en la misma escala.
+# Por eso creamos un 'escalador' que pone la edad, sexo y depto en una escala similar.
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# Creamos y entrenamos el modelo
+modelo_log = LogisticRegression(max_iter=1000, random_state=42, class_weight='balanced')
+modelo_log.fit(X_train_scaled, y_train)
+
+# Predecimos y calculamos la precisión
+pred_log = modelo_log.predict(X_test_scaled)
+precision_log = accuracy_score(y_test, pred_log)
+print(f"Precisión Regresión Logística: {precision_log * 100:.2f}%")
+
+# --- B. XGBOOST ---
+# ¡AQUÍ ESTÁ LA MAGIA! Convertimos 'C' y 'P' a 0 y 1 solo para este modelo.
+y_train_xgb = y_train.map({'C': 0, 'P': 1})
+y_test_xgb = y_test.map({'C': 0, 'P': 1})
+
+modelo_xgb = XGBClassifier(random_state=42, eval_metric='mlogloss')
+# Usamos las variables numéricas para entrenar
+modelo_xgb.fit(X_train, y_train_xgb) 
+
+# Predecimos y calculamos la precisión
+pred_xgb = modelo_xgb.predict(X_test)
+precision_xgb = accuracy_score(y_test_xgb, pred_xgb)
+print(f"Precisión XGBoost: {precision_xgb * 100:.2f}%")
+
+# Comparación final
+print("\n--- RESUMEN DE PRECISIÓN ---")
+print(f"Random Forest: {precision * 100:.2f}%") # 'precision' es la variable que ya tenías en tu línea 120
+print(f"Reg. Logística: {precision_log * 100:.2f}%")
+print(f"XGBoost: {precision_xgb * 100:.2f}%")
+
 # 26. Crear una pequeña tabla para verlo ordenado
 import pandas as pd
 tabla_importancia = pd.DataFrame({
@@ -140,10 +186,29 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 plt.figure(figsize=(8, 5))
-sns.barplot(x='Importancia', y='Variable', data=tabla_importancia, palette='magma')
+sns.barplot(x='Importancia', y='Variable', data=tabla_importancia, hue='Variable', palette='magma', legend=False)
 plt.title("¿Qué variables importan más para predecir el Dengue?")
 plt.xlabel("Nivel de Importancia")
 plt.ylabel("Variable")
 plt.savefig("grafico_importancia_variables.png")
 plt.show()
 
+# ==========================================
+# 28. MATRIZ DE CONFUSIÓN PARA RANDOM FOREST
+# ==========================================
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Calculamos la matriz
+matriz = confusion_matrix(y_test, predicciones)
+
+# La dibujamos bonito
+plt.figure(figsize=(6, 4))
+sns.heatmap(matriz, annot=True, fmt='d', cmap='Blues', 
+            xticklabels=modelo.classes_, yticklabels=modelo.classes_)
+plt.title("Matriz de Confusión - Random Forest")
+plt.xlabel("Lo que predijo el modelo")
+plt.ylabel("La realidad (Lo que era)")
+plt.savefig("matriz_confusion_rf.png")
+plt.show()

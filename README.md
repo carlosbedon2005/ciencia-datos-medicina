@@ -26,3 +26,9 @@ Se compararon 3 algoritmos:
   * **XGBoost:** 89.70% de precisión (este resultado es engañoso debido al fuerte desbalance de clases: la mayoría de casos son clínicos, por lo que el modelo tiende a predecir siempre esa clase).
 
 **Conclusión del modelo:** El departamento (`depto_num`) es la variable más influyente (92% de importancia). La matriz de confusión demuestra que, aunque el modelo acierta la mayoría de los casos clínicos, todavía tiene dificultades para detectar los casos "Probables" basándose solo en datos demográficos, lo que demuestra que el diagnóstico preciso requiere de pruebas de laboratorio.
+## 📊 Origen de los Datos
+
+La base de datos utilizada para este análisis (más de 200,000 registros) no se incluye en este repositorio debido a su gran tamaño. 
+
+Puedes descargar el archivo `.csv` original directamente desde el portal oficial de Datos Abiertos del Estado Peruano:
+🔗 [Vigilancia Epidemiológica de Dengue - MINSA](https://www.datosabiertos.gob.pe/dataset/vigilancia-epidemiol%C3%B3gica-de-dengue)
